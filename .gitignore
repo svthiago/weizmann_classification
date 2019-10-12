@@ -1,12 +1,11 @@
 .Rhistory
-.ipynb_checkpoints/
+*.ipynb_checkpoints/
 data/
-.log
-.ods
-.h5
-.json
-.png
-.odt
+*.ods
+*.h5
+*.json
+*.png
+*.odt
 
 
 # Byte-compiled / optimized / DLL files
