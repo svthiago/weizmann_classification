@@ -7,6 +7,7 @@ import re
 
 import cv2
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 from loguru import logger
 from natsort import natsorted
@@ -17,22 +18,27 @@ from keras.callbacks import TensorBoard
 from keras.models import model_from_json
 from keras.layers import Input, Conv2D, Dense, MaxPooling2D, UpSampling2D
 
-# dim = 320
-dim = 16
 
-def load_dataset(path, img_width = dim, img_heigth = dim):
+def load_dataset(path, sorted_names, img_width, img_heigth):
     
     folders = natsorted(os.listdir(path))
 
-    X = []
-    Y = []
-    names = []
+    # regex for detection of the names belonging to each dataset 
+    train_names = re.compile('|'.join(sorted_names['train_names']))
+    eval_name = re.compile('|'.join(sorted_names['eval_name']))
 
-    for folder in folders:
+    train_data = []
+    train_labels = []
+    
+    eval_data = []
+    eval_labels = []
 
+
+    logger.debug("Loading dataset")
+
+    for folder in tqdm(folders):
         if os.path.isdir(path + folder):
             frames = natsorted(os.listdir(path + folder))
-            logger.debug("Loading: " + folder)
 
             for frame in frames:
                 # load a new frame
@@ -43,12 +49,29 @@ def load_dataset(path, img_width = dim, img_heigth = dim):
                 # resize frame
                 new_frame = cv2.resize(new_frame, (img_width, img_heigth))
 
-                X.append(new_frame.astype("float32")/255.)
-                Y.append(folder)
-                names.append(frame.split('_')[0])
-    X = np.array(X).reshape((-1, img_width, img_heigth, 1))
+                # X.append(new_frame.astype("float32")/255.)
+                # Y.append(folder)
 
-    return X, Y
+                name = frame.split('_')[0]
+
+                if re.match(train_names, name):
+                    train_data.append(new_frame.astype("float32")/255.)
+                    train_labels.append(folder)
+
+
+                elif re.match(eval_name, name):
+                    eval_data.append(new_frame.astype("float32")/255.)
+                    eval_labels.append(folder)
+
+    # X = np.array(X).reshape((-1, img_width, img_heigth, 1))
+    train_data = np.array(train_data).reshape((-1, img_width, img_heigth, 1))
+    eval_data = np.array(eval_data).reshape((-1, img_width, img_heigth, 1))
+
+    train_labels = pd.get_dummies(train_labels).values
+    eval_labels = pd.get_dummies(eval_labels).values
+
+    return train_data, train_labels, eval_data, eval_labels
+
 
 def sort_names(names, set_list):
     _names = names.copy()
@@ -71,9 +94,6 @@ def sort_names(names, set_list):
 
 # this method load all frame names within the action folders
 def split_by_person(path, frames, labels, names, sorted_names):
-
-    folders = natsorted(os.listdir(path))
-    persons = []
 
     # regex for detection of the names belonging to each dataset 
     train_names = re.compile('|'.join(sorted_names[0][2]))
@@ -104,13 +124,13 @@ def split_by_person(path, frames, labels, names, sorted_names):
         for label in labels:
             for name in names:
                 if re.match(train_names, name):
-                    train_data.append(frame.astype("float32")/255.)
+                    train_data.append(frame)
                     train_labels.append(label)
                 elif re.match(test_names, name):
-                    test_data.append(frame.astype("float32")/255.)
+                    test_data.append(frame)
                     test_labels.append(label)
                 elif re.match(eval_names, name):
-                    eval_data.append(frame.astype("float32")/255.)
+                    eval_data.append(frame)
                     eval_labels.append(label)
 
     frames = None
@@ -127,7 +147,7 @@ def split_by_person(path, frames, labels, names, sorted_names):
 
     return train_data, train_labels, test_data, test_labels, eval_data, eval_labels
 
-def get_model(img_width = dim, img_heigth = dim):
+def get_model(img_width, img_heigth):
 
     input_img = Input(shape=(img_width, img_heigth, 1))
     x = Conv2D(16, (3, 3), activation='relu', padding ='same')(input_img)
@@ -154,34 +174,26 @@ def get_model(img_width = dim, img_heigth = dim):
     #Create model
     autoencoder = Model(input_img, decoded)
 
-    return autoencoder, encoded
+    return autoencoder
 
 
-def train_model(model, train_data, test_data, eval_data):
+def train_model(model, train_data, eval_data, n_epochs, batch_size):
 
     # Create model description
     logger.debug("Creating model...")
+    model.trainable = True
     model.compile(optimizer='adadelta', loss='mean_squared_error')
 
     # Train model
     logger.debug("Training model...")
-    history = model.fit(train_data, train_data, epochs=1, batch_size=1, verbose = 1,  shuffle=False, validation_data=(test_data, test_data), callbacks=[TensorBoard(log_dir='/tmp/tb', histogram_freq=0, write_graph=True)])
+    history = model.fit(train_data, train_data, epochs = n_epochs, batch_size = batch_size, verbose = 1,  shuffle=False, validation_data=(eval_data, eval_data), callbacks=[TensorBoard(log_dir='/tmp/tb', histogram_freq=0, write_graph=True)])
 
-    # Evaluate loaded model on test data
-    logger.debug("Evaluating model...")
-    score = model.evaluate(eval_data, eval_data, verbose=0)
-    logger.debug("%s: %.2f%%" % (model.metrics_names , score * 100))
+    for layer in model.layers:
+        layer.trainable = False
 
-    # Serialize model to JSON
-    logger.debug("Saving model...")
-    model_json = model.to_json()
-    with open("model.json", "w") as json_file:
-        json_file.write(model_json)
+    # model.trainable = False
 
-    # Serialize weights to HDF5
-    logger.debug("Saving weights...")
-
-    model.save_weights("model.h5")
+    #model.save("model.h5")
 
     return model, history 
 
@@ -214,13 +226,35 @@ def compare_results(frames, predicted, n_frames = 5):
                 print('%'*10)
                 print('predicted frame plotted, index:', i)
                 plt.imshow(predicted[i, : , : , 0], cmap = 'gray')
-        
+
     plt.show()
     fig.savefig('resultado.png', dpi = fig.dpi)
 
+def save_model_performance(path, model_name, history):
+
+    fig = plt.figure()
+
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title(model_name)
+
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+
+    plt.legend(['train', 'val'], loc='upper left')
+    fig.savefig(path, dpi = fig.dpi)
 
 
 if __name__ == "__main__":
+
+    # dim = 512
+    # n_epochs = 50
+    # batch_size = 4
+
+    dim = 32
+    n_epochs = 4
+    batch_size = 1
+
 
     logger.add('file_{time}.log')
 
@@ -228,28 +262,55 @@ if __name__ == "__main__":
 
     names = ["daria", "denis", "eli", "ido", "ira", "lena", "lyova", "moshe", "shahar"]
 
-    set_list = [('train_list', 0.65, []), ('test_list', 0.25, []), ('eval_list', 0.1, [])]
+    set_list = {'train_names': [], 'eval_name': []}
 
-    sorted_names = sort_names(names, set_list)
-    logger.debug(sorted_names)
-    
-    frames, labels = load_dataset(path)
+    for i in range(9):
+        set_list['eval_name'] = names.pop()
+        set_list['train_names'] = names
+        logger.debug(set_list)
 
-    # omitting the labels
-    train_data, _, test_data, _, eval_data, _ = split_by_person(path, frames, labels, names, sorted_names)
+        # omitting the labels
+        train_data, _, eval_data, _ = load_dataset(path, set_list, dim, dim)
+
+        # inserting the last name into head of the list
+        names.insert(0, set_list['eval_name'])
 
 
-    # checking data proportions
-    total_len = len(train_data) + len(test_data) + len(eval_data)
+        # # checking data proportions
+        total_len = len(train_data) + len(eval_data)
 
-    logger.debug('train data len: ', len(train_data) / total_len,
-    'test data len: ', len(test_data) / total_len,
-    'eval_data: ', len(eval_data) / total_len)
+        logger.debug("Total len: " + str(total_len))
 
-    # create the model and train it
-    autoencoder, encoded = get_model()
-    _, history = train_model(autoencoder, train_data, test_data, eval_data)
+        logger.debug('train data len: ' + str(len(train_data)))
+        logger.debug('eval_data: '+ str(len(eval_data)))
 
-    predicted_frames = autoencoder.predict(eval_data[:10], batch_size = 1)
+        logger.debug('train data(%): ' + str(len(train_data) / total_len))
+        logger.debug('eval_data(%): ' + str(len(eval_data) / total_len))
+        logger.debug('###################')
 
-    compare_results(eval_data, predicted_frames, 5)
+        # ## create the model and train it
+        # autoencoder = get_model(dim, dim)
+        # autoencoder, history = train_model(autoencoder, train_data, eval_data, n_epochs, batch_size)
+
+        # performance_graph_path = './models/autoencoder_' + str(i) + '.png'
+        # model_performance_name = 'Autoencoder ' + str(i)
+
+        # save_model_performance(performance_graph_path, model_performance_name, history)
+
+        # del train_data
+        # del eval_data
+
+        # trained_model_path = './models/autoencoder_' + str(i) + '.h5'
+        # autoencoder.save(trained_model_path)
+
+
+#     # omitting the labels
+#     train_data, _, test_data, _, eval_data, _ = split_by_person(path, frames, labels, names, sorted_names)
+
+#     # create the model and train it
+#    autoencoder = get_model(dim, dim)
+#    _, history = train_model(autoencoder, train_data, eval_data, n_epochs, batch_size)
+
+#    predicted_frames = autoencoder.predict(eval_data[:10], batch_size = 1)
+
+#    compare_results(eval_data, predicted_frames, 5)
