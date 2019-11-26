@@ -247,14 +247,13 @@ def save_model_performance(path, model_name, history):
 
 if __name__ == "__main__":
 
-    # dim = 512
-    # n_epochs = 50
-    # batch_size = 4
+    dim = 512
+    n_epochs = 50
+    batch_size = 4
 
-    dim = 32
-    n_epochs = 4
-    batch_size = 1
-
+    # dim = 32
+    # n_epochs = 4
+    # batch_size = 1
 
     logger.add('file_{time}.log')
 
@@ -288,20 +287,20 @@ if __name__ == "__main__":
         logger.debug('eval_data(%): ' + str(len(eval_data) / total_len))
         logger.debug('###################')
 
-        # ## create the model and train it
-        # autoencoder = get_model(dim, dim)
-        # autoencoder, history = train_model(autoencoder, train_data, eval_data, n_epochs, batch_size)
+        ## create the model and train it
+        autoencoder = get_model(dim, dim)
+        autoencoder, history = train_model(autoencoder, train_data, eval_data, n_epochs, batch_size)
 
-        # performance_graph_path = './models/autoencoder_' + str(i) + '.png'
-        # model_performance_name = 'Autoencoder ' + str(i)
+        performance_graph_path = './models/autoencoder_' + str(i) + '.png'
+        model_performance_name = 'Autoencoder ' + str(i)
 
-        # save_model_performance(performance_graph_path, model_performance_name, history)
+        save_model_performance(performance_graph_path, model_performance_name, history)
 
-        # del train_data
-        # del eval_data
+        del train_data
+        del eval_data
 
-        # trained_model_path = './models/autoencoder_' + str(i) + '.h5'
-        # autoencoder.save(trained_model_path)
+        trained_model_path = './models/autoencoder_' + str(i) + '.h5'
+        autoencoder.save(trained_model_path)
 
 
 #     # omitting the labels
