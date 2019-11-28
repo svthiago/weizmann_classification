@@ -23,17 +23,13 @@ def subtract_frames(folder_name, sub_folder_name, file_name):
     cap = cv2.VideoCapture(folder_name + "/" +file_name)
     print(cap)
 
-    # trying to save the subtracted version of the video
-    frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-
-    frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
     fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 
     _, previous_frame = cap.read()
 
-    count = 0
-    for frame in range(int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1):
+    iterations = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) - 1
+
+    for count, frame in enumerate(range(iterations)):
         previous_gray_frame = cv2.cvtColor(previous_frame, cv2.COLOR_BGR2GRAY)
 
         _, current_frame = cap.read()
@@ -42,18 +38,13 @@ def subtract_frames(folder_name, sub_folder_name, file_name):
         frame_diff = cv2.absdiff(current_gray_frame, previous_gray_frame)
         _, thres_frame_diff = cv2.threshold(frame_diff, 15, 255, cv2.THRESH_BINARY)
 
-        cv2.imwrite(sub_folder_name + "/" + file_name.split(".")[0] + "_" + str(count) + ".jpg", thres_frame_diff)
-        # cv2.imshow('Grayscale', thres_frame_diff)
+        filename = file_name.split(".")[0] + "_" + str(count) + ".jpg"
+
+        cv2.imwrite(os.path.join(sub_folder_name, file_name), thres_frame_diff)
 
         previous_frame = current_frame
 
-        k = cv2.waitKey(30) & 0xff
-        if k == 27:
-            break
-
-        count += 1
     cap.release()
-    cv2.destroyAllWindows()
     
 
 if __name__ == '__main__':
@@ -65,8 +56,6 @@ if __name__ == '__main__':
 
     for folder in os.listdir(path):
         print(folder)
-        # if os.path.isdir(folder):
-        #     if not folder.split("_")[-1]:
         actions_list.append(path + folder)
         subtracted_actions_list.append(path + folder + "_subtracted")
 
