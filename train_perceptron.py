@@ -12,8 +12,11 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
 from keras.utils import to_categorical
+from keras.callbacks import EarlyStopping
 from keras.layers import Input, Flatten, Dense, Dropout
 from keras.models import load_model, Model, Sequential
+
+
 
 
 def load_dataset(path, sorted_names, img_width, img_heigth):

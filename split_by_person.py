@@ -14,8 +14,8 @@ from natsort import natsorted
 import matplotlib.pyplot as plt
 
 from keras.models import Model
-from keras.callbacks import TensorBoard
 from keras.models import model_from_json
+from keras.callbacks import TensorBoard, EarlyStopping
 from keras.layers import Input, Conv2D, Dense, MaxPooling2D, UpSampling2D
 
 
