@@ -182,7 +182,8 @@ def train_model(model, train_data, eval_data, n_epochs, batch_size):
     # Create model description
     logger.debug("Creating model...")
     model.trainable = True
-    model.compile(optimizer='adadelta', loss='mean_squared_error')
+    # model.compile(optimizer='adadelta', loss='mean_squared_error')
+    model.compile(optimizer='adadelta', loss='binary_crossentropy')
 
     # Train model
     logger.debug("Training model...")
