@@ -58,10 +58,18 @@ def load_dataset(path, sorted_names, img_width, img_heigth):
                     train_data.append(new_frame.astype("float32")/255.)
                     train_labels.append(folder)
 
+                    flipped_frame = cv2.flip(new_frame.astype("float32")/255., 1)
+                    train_data.append(flipped_frame)
+                    train_labels.append(folder)
+
 
                 elif re.match(eval_name, name):
                     eval_data.append(new_frame.astype("float32")/255.)
                     eval_labels.append(folder)
+
+                    flipped_frame = cv2.flip(new_frame.astype("float32")/255., 1)
+                    train_data.append(flipped_frame)
+                    train_labels.append(folder)
 
     # X = np.array(X).reshape((-1, img_width, img_heigth, 1))
     train_data = np.array(train_data).reshape((-1, img_width, img_heigth, 1))
@@ -182,8 +190,7 @@ def train_model(model, train_data, eval_data, n_epochs, batch_size):
     # Create model description
     logger.debug("Creating model...")
     model.trainable = True
-    # model.compile(optimizer='adadelta', loss='mean_squared_error')
-    model.compile(optimizer='adadelta', loss='binary_crossentropy')
+    model.compile(optimizer='adadelta', loss='mean_squared_error')
 
     # Train model
     logger.debug("Training model...")
