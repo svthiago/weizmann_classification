@@ -20,10 +20,8 @@ def subtract_frames(folder_name, sub_folder_name, file_name):
     print("Folder name: " + folder_name)
     print("File name: " + file_name)
 
-    cap = cv2.VideoCapture(folder_name + "/" +file_name)
+    cap = cv2.VideoCapture(os.path.join(folder_name, file_name))
     print(cap)
-
-    fourcc = cv2.VideoWriter_fourcc(*'DIVX')
 
     _, previous_frame = cap.read()
 

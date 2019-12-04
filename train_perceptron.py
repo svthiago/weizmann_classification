@@ -100,7 +100,7 @@ if __name__ == "__main__":
 
     num_classes = 10
     dim = 512
-    # dim = 32
+
     n_epochs = 10
     batch_size = 4
 
@@ -159,12 +159,15 @@ if __name__ == "__main__":
             logger.debug('eval_data(%): ' + str(len(x_eval) / total_len))
             logger.debug('###################')
 
+            es = EarlyStopping(monitor='val_loss', verbose=1, patience=10)
+
             ## train the model
             history = model.fit(x_train, y_train,
                         batch_size=1,
                         epochs=20,
                         verbose=1,
-                        validation_data=(x_eval, y_eval))
+                        validation_data=(x_eval, y_eval),
+                        callbacks= [es])
 
             del x_train
             del y_train

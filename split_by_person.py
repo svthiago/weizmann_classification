@@ -192,9 +192,12 @@ def train_model(model, train_data, eval_data, n_epochs, batch_size):
     model.trainable = True
     model.compile(optimizer='adadelta', loss='mean_squared_error')
 
+    # Simple early stopping
+    es = EarlyStopping(monitor='val_loss', verbose=1, patience=10)
+
     # Train model
     logger.debug("Training model...")
-    history = model.fit(train_data, train_data, epochs = n_epochs, batch_size = batch_size, verbose = 1,  shuffle=False, validation_data=(eval_data, eval_data), callbacks=[TensorBoard(log_dir='/tmp/tb', histogram_freq=0, write_graph=True)])
+    history = model.fit(train_data, train_data, epochs = n_epochs, batch_size = batch_size, verbose = 1,  shuffle=False, validation_data=(eval_data, eval_data), callbacks=[TensorBoard(log_dir='/tmp/tb', histogram_freq=0, write_graph=True), es])
 
     for layer in model.layers:
         layer.trainable = False
