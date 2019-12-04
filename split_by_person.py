@@ -158,25 +158,25 @@ def split_by_person(path, frames, labels, names, sorted_names):
 def get_model(img_width, img_heigth):
 
     input_img = Input(shape=(img_width, img_heigth, 1))
-    x = Conv2D(4, (5, 5), activation='relu', padding ='same')(input_img)
+    x = Conv2D(8, (5, 5), activation='relu', padding ='same')(input_img)
     x = MaxPooling2D((2, 2), padding='same')(x)
-    x = Conv2D(8, (5, 5), activation='relu', padding ='same')(x)
-    x = MaxPooling2D((2, 2), padding='same')(x)
-    x = Conv2D(16, (3, 3), activation='relu', padding ='same')(x)
+    x = Conv2D(16, (5, 5), activation='relu', padding ='same')(x)
     x = MaxPooling2D((2, 2), padding='same')(x)
     x = Conv2D(32, (3, 3), activation='relu', padding ='same')(x)
+    x = MaxPooling2D((2, 2), padding='same')(x)
+    x = Conv2D(64, (3, 3), activation='relu', padding ='same')(x)
     encoded = MaxPooling2D((2, 2), padding='same')(x)
 
     #6x6x32 -- bottleneck
 
     x = UpSampling2D((2, 2))(encoded)
+    x = Conv2D(64, (3, 3), activation='relu', padding ='same')(x)
+    x = UpSampling2D((2, 2))(x)
     x = Conv2D(32, (3, 3), activation='relu', padding ='same')(x)
     x = UpSampling2D((2, 2))(x)
-    x = Conv2D(16, (3, 3), activation='relu', padding ='same')(x)
+    x = Conv2D(16, (5, 5), activation='relu', padding ='same')(x)
     x = UpSampling2D((2, 2))(x)
     x = Conv2D(8, (5, 5), activation='relu', padding ='same')(x)
-    x = UpSampling2D((2, 2))(x)
-    x = Conv2D(4, (5, 5), activation='relu', padding ='same')(x)
     decoded = Conv2D(1, (3, 3), activation='relu', padding ='same')(x)
 
     #Create model
