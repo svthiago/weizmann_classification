@@ -104,8 +104,8 @@ if __name__ == "__main__":
     num_classes = 10
     dim = 512
 
-    n_epochs = 10
-    batch_size = 4
+    n_epochs = 50
+    batch_size = 20
 
     logger.add('file_{time}.log')
 
@@ -130,9 +130,11 @@ if __name__ == "__main__":
         model.add(Flatten())
         model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.5))
-        model.add(Dense(128, activation='relu'))
+        model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.5))
-        model.add(Dense(64, activation='relu'))
+        model.add(Dense(256, activation='relu'))
+        model.add(Dropout(rate = 0.5))
+        model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.5))
         model.add(Dense(num_classes, activation='sigmoid'))
 
@@ -169,8 +171,8 @@ if __name__ == "__main__":
 
         ## train the model
         history = model.fit(x_train, y_train,
-                    batch_size=1,
-                    epochs=50,
+                    batch_size= batch_size,
+                    epochs= n_epochs,
                     verbose=1,
                     validation_data=(x_eval, y_eval)) #,
                     # callbacks= [es])
