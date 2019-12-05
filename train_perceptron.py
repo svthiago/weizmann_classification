@@ -162,7 +162,7 @@ if __name__ == "__main__":
             logger.debug('eval_data(%): ' + str(len(x_eval) / total_len))
             logger.debug('###################')
 
-            es = EarlyStopping(monitor='val_loss', verbose=1, patience=10)
+            es = EarlyStopping(monitor='val_loss', verbose=1)#, patience=10)
 
             ## train the model
             history = model.fit(x_train, y_train,
