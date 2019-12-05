@@ -169,8 +169,8 @@ if __name__ == "__main__":
                         batch_size=1,
                         epochs=200,
                         verbose=1,
-                        validation_data=(x_eval, y_eval),
-                        callbacks= [es])
+                        validation_data=(x_eval, y_eval)) #,
+                        # callbacks= [es])
 
             del x_train
             del y_train
