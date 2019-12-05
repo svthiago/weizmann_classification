@@ -170,7 +170,7 @@ if __name__ == "__main__":
         ## train the model
         history = model.fit(x_train, y_train,
                     batch_size=1,
-                    epochs=200,
+                    epochs=50,
                     verbose=1,
                     validation_data=(x_eval, y_eval)) #,
                     # callbacks= [es])
