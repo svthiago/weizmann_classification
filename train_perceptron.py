@@ -117,69 +117,68 @@ if __name__ == "__main__":
 
 
     for i, model in enumerate(models):
-        if model == './models/autoencoder_3.h5':
-            logger.debug(model)
-            autoencoder = load_model(model)
+        logger.debug(model)
+        autoencoder = load_model(model)
 
-            del autoencoder.layers[-9:]
-            print(autoencoder.summary())
+        del autoencoder.layers[-9:]
+        print(autoencoder.summary())
 
-            encoder = autoencoder.layers[-1].output
+        encoder = autoencoder.layers[-1].output
 
-            model = Sequential(autoencoder.layers)
+        model = Sequential(autoencoder.layers)
 
-            model.add(Flatten())
-            model.add(Dense(256, activation='relu'))
-            model.add(Dropout(rate = 0.5))
-            model.add(Dense(num_classes, activation='softmax'))
+        model.add(Flatten())
+        model.add(Dense(256, activation='relu'))
+        model.add(Dropout(rate = 0.5))
+        model.add(Dense(num_classes, activation='softmax'))
 
-            model.compile(optimizer = 'Adam', loss = 'categorical_crossentropy', metrics=['accuracy'])
+        model.compile(optimizer = 'Adam', loss = 'categorical_crossentropy', metrics=['accuracy'])
 
-            print('###########')
+        print('###########')
 
-            print(model.summary())
+        print(model.summary())
 
-            set_list['eval_name'] = names.pop()
-            set_list['train_names'] = names
-            logger.debug(set_list)
+        set_list['eval_name'] = names.pop()
+        set_list['train_names'] = names
+        logger.debug(set_list)
 
-            # omitting the labels
-            x_train, y_train, x_eval, y_eval = load_dataset(path, set_list, dim, dim)
+        # omitting the labels
+        x_train, y_train, x_eval, y_eval = load_dataset(path, set_list, dim, dim)
 
-            # inserting the last name into head of the list
-            names.insert(0, set_list['eval_name'])
+        # inserting the last name into head of the list
+        names.insert(0, set_list['eval_name'])
 
 
-            # # checking data proportions
-            total_len = len(x_train) + len(x_eval)
+        # # checking data proportions
+        total_len = len(x_train) + len(x_eval)
 
-            logger.debug("Total len: " + str(total_len))
+        logger.debug("Total len: " + str(total_len))
 
-            logger.debug('train data len: ' + str(len(x_train)))
-            logger.debug('eval_data: '+ str(len(x_eval)))
+        logger.debug('train data len: ' + str(len(x_train)))
+        logger.debug('eval_data: '+ str(len(x_eval)))
 
-            logger.debug('train data(%): ' + str(len(x_train) / total_len))
-            logger.debug('eval_data(%): ' + str(len(x_eval) / total_len))
-            logger.debug('###################')
+        logger.debug('train data(%): ' + str(len(x_train) / total_len))
+        logger.debug('eval_data(%): ' + str(len(x_eval) / total_len))
+        logger.debug('###################')
 
-            es = EarlyStopping(monitor='val_loss', verbose=1)#, patience=10)
+        es = EarlyStopping(monitor='val_loss', verbose=1)#, patience=10)
 
-            ## train the model
-            history = model.fit(x_train, y_train,
-                        batch_size=1,
-                        epochs=200,
-                        verbose=1,
-                        validation_data=(x_eval, y_eval)) #,
-                        # callbacks= [es])
+        ## train the model
+        history = model.fit(x_train, y_train,
+                    batch_size=1,
+                    epochs=200,
+                    verbose=1,
+                    validation_data=(x_eval, y_eval)) #,
+                    # callbacks= [es])
 
-            del x_train
-            del y_train
-            del x_eval
-            del y_eval
+        del x_train
+        del y_train
+        del x_eval
+        del y_eval
 
-            performance_graph_path = './models/classifier_' + str(i) + '.png'
-            model_performance_name = 'Classifier ' + str(i)
+        performance_graph_path = './models/classifier_' + str(i) + '.png'
+        model_performance_name = 'Classifier ' + str(i)
 
-            save_model_performance(performance_graph_path, model_performance_name, history)
+        save_model_performance(performance_graph_path, model_performance_name, history)
 
-            model.save('./models/classifier_' + str(i) + '.h5')
+        model.save('./models/classifier_' + str(i) + '.h5')
