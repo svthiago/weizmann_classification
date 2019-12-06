@@ -129,13 +129,13 @@ if __name__ == "__main__":
 
         model.add(Flatten())
         model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.5))
+        # model.add(Dropout(rate = 0.5))
         model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.5))
+        # model.add(Dropout(rate = 0.5))
         model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.5))
+        # model.add(Dropout(rate = 0.5))
         model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.5))
+        # model.add(Dropout(rate = 0.5))
         model.add(Dense(num_classes, activation='softmax'))
 
         model.compile(optimizer = 'Adam', loss = 'categorical_crossentropy', metrics=['accuracy'])
