@@ -103,7 +103,7 @@ def save_model_acc(path, model_name, history):
     plt.plot(history.history['val_accuracy'])
     plt.title(model_name)
 
-    plt.ylabel('loss')
+    plt.ylabel('acc')
     plt.xlabel('epoch')
 
     plt.legend(['train', 'val'], loc='upper left')
