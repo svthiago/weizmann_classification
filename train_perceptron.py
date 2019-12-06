@@ -146,6 +146,7 @@ if __name__ == "__main__":
         model.add(Dense(1024, activation='relu'))
         model.add(Dropout(0.6))
         model.add(Dense(1024, activation='relu'))
+        model.add(Dense(1024, activation='relu'))
         # model.add(Dense(512, activation='relu'))
         # model.add(Dense(512, activation='relu'))
         # model.add(Dense(256, activation='relu'))
