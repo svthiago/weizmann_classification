@@ -118,8 +118,8 @@ if __name__ == "__main__":
     num_classes = 10
     dim = 512
 
-    n_epochs = 200
-    batch_size = 100
+    n_epochs = 400
+    batch_size = 200
 
     logger.add('file_{time}.log')
 
@@ -144,11 +144,11 @@ if __name__ == "__main__":
         model.add(Flatten())
         model.add(Dropout(rate = 0.8))
         model.add(Dense(256, activation='relu'))
-        # model.add(Dropout(rate = 0.8))
+        model.add(Dropout(rate = 0.8))
         model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.5))
         model.add(Dense(256, activation='relu'))
-        # model.add(Dropout(rate = 0.6))
+        model.add(Dropout(rate = 0.6))
         model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.7))
         model.add(Dense(num_classes, activation='softmax'))
