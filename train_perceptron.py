@@ -81,12 +81,26 @@ def load_dataset(path, sorted_names, img_width, img_heigth):
     return train_data, train_labels, eval_data, eval_labels
 
 
-def save_model_performance(path, model_name, history):
+def save_model_loss(path, model_name, history):
 
     fig = plt.figure()
 
     plt.plot(history.history['loss'])
     plt.plot(history.history['val_loss'])
+    plt.title(model_name)
+
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+
+    plt.legend(['train', 'val'], loc='upper left')
+    fig.savefig(path, dpi = fig.dpi)
+
+def save_model_acc(path, model_name, history):
+
+    fig = plt.figure()
+
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
     plt.title(model_name)
 
     plt.ylabel('loss')
@@ -104,8 +118,8 @@ if __name__ == "__main__":
     num_classes = 10
     dim = 512
 
-    n_epochs = 50
-    batch_size = 20
+    n_epochs = 200
+    batch_size = 100
 
     logger.add('file_{time}.log')
 
@@ -183,9 +197,16 @@ if __name__ == "__main__":
         del x_eval
         del y_eval
 
-        performance_graph_path = './models/classifier_' + str(i) + '.png'
-        model_performance_name = 'Classifier ' + str(i)
+        loss_graph_path = './models/classifier_loss_' + str(i) + '.png'
+        model_loss_name = 'Classifier ' + str(i) + ' Loss'
 
-        save_model_performance(performance_graph_path, model_performance_name, history)
+        save_model_loss(loss_graph_path, model_loss_name, history)
+
+
+        acc_graph_path = './models/classifier_acc_' + str(i) + '.png'
+        model_acc_name = 'Classifier ' + str(i) + ' Acc'
+
+        save_model_acc(acc_graph_path, model_acc_name, history)
+
 
         model.save('./models/classifier_' + str(i) + '.h5')
