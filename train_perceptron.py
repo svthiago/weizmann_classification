@@ -128,6 +128,7 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
+        model.add(Dropout(rate = 0.8))
         model.add(Dense(256, activation='relu'))
         # model.add(Dropout(rate = 0.5))
         model.add(Dense(256, activation='relu'))
