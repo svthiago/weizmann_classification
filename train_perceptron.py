@@ -105,7 +105,7 @@ if __name__ == "__main__":
     dim = 512
 
     n_epochs = 50
-    batch_size = 20
+    batch_size = 100
 
     logger.add('file_{time}.log')
 
