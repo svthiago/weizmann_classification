@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 
 from keras.utils import to_categorical
 from keras.callbacks import EarlyStopping
-from keras.layers import Input, Flatten, Dense, Dropout
+from keras.layers import Input, Flatten, Dense, Dropout, BatchNormalization
 from keras.models import load_model, Model, Sequential
 
 
@@ -142,19 +142,12 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
-        model.add(Dropout(rate = 0.8))
         model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(rate = 0.8))
         model.add(Dense(1024, activation='relu'))
-        model.add(Dropout(rate = 0.9))
-        model.add(Dense(512, activation='relu'))
-        model.add(Dropout(rate = 0.8))
-        model.add(Dense(512, activation='relu'))
-        model.add(Dropout(rate = 0.8))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.9))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.8))
+        # model.add(Dense(512, activation='relu'))
+        # model.add(Dense(512, activation='relu'))
+        # model.add(Dense(256, activation='relu'))
+        # model.add(Dense(256, activation='relu'))
 
         model.add(Dense(num_classes, activation='softmax'))
 
