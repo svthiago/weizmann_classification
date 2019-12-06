@@ -143,21 +143,18 @@ if __name__ == "__main__":
 
         model.add(Flatten())
         model.add(Dropout(rate = 0.8))
-        model.add(Dense(256, activation='relu'))
+        model.add(Dense(1024, activation='relu'))
+        model.add(Dropout(rate = 0.8))
+        model.add(Dense(1024, activation='relu'))
+        model.add(Dropout(rate = 0.9))
+        model.add(Dense(512, activation='relu'))
+        model.add(Dropout(rate = 0.8))
+        model.add(Dense(512, activation='relu'))
         model.add(Dropout(rate = 0.8))
         model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.9))
         model.add(Dense(256, activation='relu'))
         model.add(Dropout(rate = 0.8))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.8))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.9))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.8))
-        model.add(Dense(256, activation='relu'))
-        model.add(Dropout(rate = 0.8))
-
 
         model.add(Dense(num_classes, activation='softmax'))
 
