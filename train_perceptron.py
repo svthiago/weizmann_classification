@@ -11,10 +11,11 @@ from natsort import natsorted
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 
+from keras import regularizers
 from keras.utils import to_categorical
 from keras.callbacks import EarlyStopping
-from keras.layers import Input, Flatten, Dense, Dropout, BatchNormalization
 from keras.models import load_model, Model, Sequential
+from keras.layers import Input, Flatten, Dense, Dropout, BatchNormalization
 
 
 
@@ -142,10 +143,9 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
+        model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.02)))
         model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
-        model.add(Dense(1024, activation='relu'))
-        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
-        model.add(Dense(1024, activation='relu'))
+        model.add(Dense(1024, activation='relu'), kernel_regularizer=regularizers.l2(0.02))
         model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
 
         # model.add(Dense(512, activation='relu'))
