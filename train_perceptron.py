@@ -142,6 +142,7 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
+        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
         model.add(Dense(1024, activation='relu'))
         model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
         model.add(Dense(1024, activation='relu'))
