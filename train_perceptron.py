@@ -201,16 +201,16 @@ if __name__ == "__main__":
         del x_eval
         del y_eval
 
-        loss_graph_path = './models/classifier_loss_' + str(i) + '.png'
+        loss_graph_path = './classifier_models/classifier_loss_' + str(i) + '.png'
         model_loss_name = 'Classifier ' + str(i) + ' Loss'
 
         save_model_loss(loss_graph_path, model_loss_name, history)
 
 
-        acc_graph_path = './models/classifier_acc_' + str(i) + '.png'
+        acc_graph_path = './classifier_models/classifier_acc_' + str(i) + '.png'
         model_acc_name = 'Classifier ' + str(i) + ' Acc'
 
         save_model_acc(acc_graph_path, model_acc_name, history)
 
 
-        model.save('./models/classifier_' + str(i) + '.h5')
+        model.save('./classifier_models/classifier_' + str(i) + '.h5')
