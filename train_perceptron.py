@@ -144,9 +144,11 @@ if __name__ == "__main__":
 
         model.add(Flatten())
         model.add(Dense(1024, activation='relu'))
-        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.02, center=True, scale=True))
+        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
+        model.add(Dropout(0.5))
         model.add(Dense(1024, activation='relu'))
-        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.02, center=True, scale=True))
+        model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
+        model.add(Dropout(0.5))
 
         # model.add(Dense(512, activation='relu'))
         # model.add(Dense(512, activation='relu'))
