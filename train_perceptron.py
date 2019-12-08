@@ -145,7 +145,7 @@ if __name__ == "__main__":
         model.add(Flatten())
         model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.02)))
         model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
-        model.add(Dense(1024, activation='relu'), kernel_regularizer=regularizers.l2(0.02))
+        model.add(Dense(1024, activation='relu', kernel_regularizer=regularizers.l2(0.02)))
         model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
 
         # model.add(Dense(512, activation='relu'))
