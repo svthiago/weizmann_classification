@@ -214,4 +214,4 @@ if __name__ == "__main__":
         save_model_acc(acc_graph_path, model_acc_name, history)
 
 
-        model.save('./classifier_models/classifier_' + str(i) + '.h5')
+        model.save('./classifier_models/classifier_' + str(i) + '.h5', include_optimizer=False)
