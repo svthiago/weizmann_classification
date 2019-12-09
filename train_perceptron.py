@@ -141,7 +141,7 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
-        model.add(Dense(1024, input_shape= (, 65536),activation='relu', kernel_regularizer= regularizers.l2(0.005)))
+        model.add(Dense(1024, input_shape= (65536, ),activation='relu', kernel_regularizer= regularizers.l2(0.005)))
         # model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
         # model.add(Dropout(0.75))
         model.add(Dense(1024, activation='relu', kernel_regularizer= regularizers.l2(0.005)))
@@ -193,6 +193,9 @@ if __name__ == "__main__":
                     verbose=1,
                     validation_data=(x_eval, y_eval)) #,
                     # callbacks= [es])
+
+        for layer in model.layers:
+            layer.trainable = False
 
         del x_train
         del y_train
