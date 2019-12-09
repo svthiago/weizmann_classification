@@ -18,8 +18,6 @@ from keras.models import load_model, Model, Sequential
 from keras.layers import Input, Flatten, Dense, Dropout, BatchNormalization
 
 
-
-
 def load_dataset(path, sorted_names, img_width, img_heigth):
     
     folders = sorted(os.listdir(path), key=str)
@@ -143,7 +141,7 @@ if __name__ == "__main__":
         model = Sequential(autoencoder.layers)
 
         model.add(Flatten())
-        model.add(Dense(1024, activation='relu', kernel_regularizer= regularizers.l2(0.005)))
+        model.add(Dense(1024, input_shape= (, 65536),activation='relu', kernel_regularizer= regularizers.l2(0.005)))
         # model.add(BatchNormalization(axis=-1, momentum=0.99, epsilon=0.001, center=True, scale=True))
         # model.add(Dropout(0.75))
         model.add(Dense(1024, activation='relu', kernel_regularizer= regularizers.l2(0.005)))
