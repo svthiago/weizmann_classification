@@ -138,7 +138,7 @@ if __name__ == "__main__":
 
         model = autoencoder.layers[-1].output
 
-        # model = Sequential(autoencoder.layers)
+        model = Sequential(model.layers)
 
         model.add(Flatten())
         model.add(Dense(1024, input_shape= (65536, ),activation='relu', kernel_regularizer= regularizers.l2(0.005)))
